@@ -1,6 +1,10 @@
+import { auth } from "@/config/firebase.config";
 import DashboardLayout from '@/layouts/DashboardLayout';
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 
-export default function Example() {
+export default function Dashboard() {
+
   return (
     <DashboardLayout title="Dashboard">
         <div className="min-h-full">

@@ -6,6 +6,7 @@ export default function Document() {
       <Head />
       <body>
         <Main />
+        <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
         <NextScript />
       </body>
     </Html>

@@ -1,11 +1,13 @@
 
 
-export interface Auth {
+export interface Credential {
     email: string,
     password: string
 }
 
 export interface User {
     email: string,
-    photoURL: string,
+    password: string,
+    photoURL?: string,
+    displayName?: string,
 }

@@ -1,9 +1,10 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { browserLocalPersistence, createUserWithEmailAndPassword, setPersistence, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { createContext, useContext, useState } from "react";
 import { auth } from "@/config/firebase.config";
-import { Auth } from "@/models/user.model";
+import { User } from "@/models/user.model";
+import toast from "react-hot-toast";
+import { uploadAndGetPhoto } from "@/utils/helper.util";
 import { useRouter } from "next/router";
-import { MessageTypes, Message } from "@/models/util.model";
 
 export const AuthContext = createContext<any>(null);
 
@@ -11,29 +12,74 @@ type ComponentProps = {
     children: React.ReactNode, 
 }
 
-
 const AuthContextProvider = (props: ComponentProps) => {
     const [isLoading, setLoading] = useState(false);
-    const [message, setMessage] = useState<Message>();
+    const router = useRouter();
 
-    const register = async ({ email, password }: Auth) => {
+    function createAccount(user: User){
+        setLoading(true);
+        const toastId = toast.loading('Creating your account...', {
+            position: 'top-right',
+        });
+
+            return new Promise<any>((resolve, reject)=>{
+                createUserWithEmailAndPassword(auth, user.email, user.password)
+                .then(async (userCredential) => {
+
+                    uploadAndGetPhoto(user.email, user.photoURL).then((photoURL) => {
+                        updateProfile(userCredential.user, {
+                            displayName: user.displayName,
+                            photoURL: photoURL
+                        });
+                    });
+
+                    toast.success('Account created successfully', {
+                        id: toastId,
+                    });
+                    resolve(userCredential)
+                })
+                .catch((error) => {
+                    toast.error(error.message, {
+                        id: toastId,
+                    })
+                    reject(error);
+                })
+                .finally(() => setLoading(false));
+            });
+    }
+
+    function signInAccount(user: User){
         setLoading(true);
 
-        await createUserWithEmailAndPassword(auth, email, password)
+        return signInWithEmailAndPassword(auth, user.email, user.password)
         .then((userCredential) => {
-            setMessage({ type: MessageTypes.SUCCESS, message: 'You have successfully registered.' });
+            router.push('/dashboard');
         })
         .catch((error) => {
-            setMessage({ type: MessageTypes.ERROR, message: error.message });
-        }).finally(() => setLoading(false));
+            toast.error(error.message, {
+                position: 'top-right',
+            })
+        })
+        .finally(() => setLoading(false));
+    }
+
+    function logout() {
+        signOut(auth).then(() => {
+            router.push('/');
+        }).catch((error) => {
+            toast.error(error.message, {
+                position: 'top-right',
+            })
+        });
     }
 
     return (
         <AuthContext.Provider 
             value={{
-                register,
+                createAccount,
+                signInAccount,
+                logout,
                 isLoading,
-                message,
             }}
             {...props}
         />
