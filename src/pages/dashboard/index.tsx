@@ -1,9 +1,7 @@
-import { auth } from "@/config/firebase.config";
+import isAuth from "@/hocs/isAuth";
 import DashboardLayout from '@/layouts/DashboardLayout';
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react";
 
-export default function Dashboard() {
+function Dashboard() {
 
   return (
     <DashboardLayout title="Dashboard">
@@ -15,3 +13,5 @@ export default function Dashboard() {
     </DashboardLayout>
   )
 }
+
+export default isAuth(Dashboard);

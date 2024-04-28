@@ -7,8 +7,9 @@ import { User, updateProfile } from "firebase/auth";
 import { fileToBase64, uploadAndGetPhoto } from "@/utils/helper.util";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import isAuth from "@/hocs/isAuth";
 
-export default function Profile() {
+function Profile() {
     const user = useUser();
 
     const [userDetails, setUserDetails] = useState<User>();
@@ -154,3 +155,5 @@ export default function Profile() {
         </form>
     )
 }
+
+export default isAuth(Profile);

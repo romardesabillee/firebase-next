@@ -1,6 +1,7 @@
+import isAuth from "@/hocs/isAuth";
 import DashboardLayout from "@/layouts/DashboardLayout";
 
-export default function Blogs() {
+function Blogs() {
     return (
         <DashboardLayout title="Blogs">
             <div className="min-h-full">
@@ -11,3 +12,5 @@ export default function Blogs() {
         </DashboardLayout>
     )
 }
+
+export default isAuth(Blogs);
