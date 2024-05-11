@@ -5,6 +5,7 @@ import { User } from "@/models/user.model";
 import toast from "react-hot-toast";
 import { uploadAndGetPhoto } from "@/utils/helper.util";
 import { useRouter } from "next/router";
+import useUser from "@/hooks/useUser";
 
 export const AuthContext = createContext<any>(null);
 

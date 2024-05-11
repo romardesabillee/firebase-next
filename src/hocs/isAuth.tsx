@@ -1,18 +1,22 @@
 import { useRouter } from "next/router";
-import useUser from "@/hooks/useUser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebase.config";
 
 export default function isAuth(Component: React.FC) {
     return function AuthComponent(props: any) {
-        const user = useUser();
         const router = useRouter();
+        const [user, setUser] = useState<User>();
 
         useEffect(() => {
-            if (user == null) {
-                router.push('/');
-            }
+            onAuthStateChanged(auth, (user) => {
+                if(user == null) {
+                    router.push('/');
+                }
+                setUser(user as User);
+            });
         }, []);
 
-        return user ? <Component {...props} /> : null;
+        return user ? <Component {...props} />: null;
     }
 }
